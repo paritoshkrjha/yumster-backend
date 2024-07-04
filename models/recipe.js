@@ -1,6 +1,6 @@
 import {Schema, model} from 'mongoose'
 
-const recipeSchema = new Schema({  
+const postSchema = new Schema({  
     title : {
         type: String,
         required: true,
@@ -37,6 +37,6 @@ const recipeSchema = new Schema({
     }],
 }, {timestamps:true})
 
-const recipe = model('Recipe', recipeSchema)
+const Post = model('Post', postSchema)
 
-export default recipe
+export default Post

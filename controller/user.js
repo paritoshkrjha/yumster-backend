@@ -15,7 +15,7 @@ async function handleUserTokenValidation(req, res) {
 async function handleUserLogin(req, res) {
   const { email, password } = req.body
   try {
-    const token = await User.matchUserPasswordandGenerteToken(email, password)
+    const token = await User.matchUserPasswordandGenerateToken(email, password)
     return res.status(200).json({ status: 'success', token: token })
   } catch (error) {
     return res.status(401).json({ status: 'error', message: error.message })
@@ -24,7 +24,7 @@ async function handleUserLogin(req, res) {
 
 async function handleUserSignUp(req, res) {
   const { username, email, password, preferences } = req.body
-
+  console.log(req.body)
   //checking if all required fields are provided
   if (!username || !email || !password) {
     return res
@@ -34,8 +34,8 @@ async function handleUserSignUp(req, res) {
   try {
     // Checking if user already exists
     const user = await User.findOne({ email: email })
-
     if (user) {
+      console.log('here')
       return res
         .status(400)
         .json({ status: 'error', message: 'User already exists' })
@@ -62,4 +62,14 @@ async function handleUserSignUp(req, res) {
   }
 }
 
-export { handleUserLogin, handleUserSignUp, handleUserTokenValidation }
+async function handleGetUserData(req, res) {
+  const userId = req.body.userId
+  try {
+    const user = await User.findById(userId)
+    return res.status(200).json({ status: 'success', user: user })
+  } catch (error) {
+    return res.status(500).json({ status: 'error', message: error.message })
+  }
+}
+
+export { handleUserLogin, handleUserSignUp, handleUserTokenValidation,handleGetUserData }

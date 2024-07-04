@@ -28,6 +28,16 @@ const userSchema = new Schema(
       type: [String],
       default: [],
     },
+    posts: {
+      type: [Schema.Types.ObjectId],
+      ref: 'Post',
+      default: [],
+    },
+    savedPosts: {
+      type: [Schema.Types.ObjectId],
+      ref: 'Post',
+      default: [],
+    },
     avatarUrl: {
       type: String,
       default: './images/default-user.png',
@@ -57,7 +67,7 @@ userSchema.pre('save', function (next) {
 })
 
 userSchema.static(
-  'matchUserPasswordandGenerteToken',
+  'matchUserPasswordandGenerateToken',
   async function (email, password) {
     const user = await this.findOne({ email: email })
 
