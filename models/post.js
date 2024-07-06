@@ -22,6 +22,10 @@ const postSchema = new Schema({
         type: String,
         required: true,
     }],
+    duration : {
+        type: Number,
+        required: true,
+    },
     imageUrl : {
         type: String,
         default: './images/default-recipe.jpg',
