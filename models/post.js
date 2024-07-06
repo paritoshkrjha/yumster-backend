@@ -35,6 +35,13 @@ const postSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',
     }],
+    views : {
+        type: Number,
+        default: 0,
+    },
+    tags : [{
+        type: String,
+    }],
 }, {timestamps:true})
 
 const Post = model('Post', postSchema)
