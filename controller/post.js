@@ -82,4 +82,14 @@ async function handleStarPost(req, res) {
   }
 }
 
-export { handleCreatePost, handleLikePost, handleStarPost }
+async function handleGetPosts(req, res) {
+  try {
+    const posts = await Post.find().populate('author', 'username')
+    console.log(posts)
+    return res.status(200).json({ status: 'success', posts: posts })
+  } catch (error) {
+    return res.status(400).json({ status: 'error', message: error.message })
+  }
+}
+
+export { handleCreatePost, handleLikePost, handleStarPost, handleGetPosts }
