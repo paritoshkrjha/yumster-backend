@@ -1,12 +1,22 @@
-import express from 'express'
+import Post from '../models/post.js'
 
-const router = express.Router()
+async function handleCreatePost(req, res) {
+  const { title, description, ingredients, steps, duration, imageUrl, tags , author} = req.body
+  try {
+    const post = await Post.create({
+      title,
+      description,
+      ingredients,
+      steps,
+      duration,
+      imageUrl,
+      tags,
+      author
+    })
+    return res.status(201).json({ status: 'success', post: post })
+  } catch (error) {
+    return res.status(400).json({ status: 'error', message: error.message })
+  }
+}
 
-router.get('/posts', (req, res) => {})
-
-router.post('/posts', (req, res) => {})
-
-router.delete('/posts', (req, res) => {})
-
-
-export default router
+export { handleCreatePost }

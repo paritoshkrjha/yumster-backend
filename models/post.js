@@ -43,6 +43,11 @@ const postSchema = new Schema({
         type: Number,
         default: 0,
     },
+    mealType : {
+        type: String,
+        enum: ['breakfast', 'lunch', 'dinner', 'snack'],
+        required: true,
+    },
     tags : [{
         type: String,
     }],
