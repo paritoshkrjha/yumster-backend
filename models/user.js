@@ -33,7 +33,7 @@ const userSchema = new Schema(
       ref: 'Post',
       default: [],
     },
-    savedPosts: {
+    starredPosts: {
       type: [Schema.Types.ObjectId],
       ref: 'Post',
       default: [],
@@ -53,16 +53,15 @@ const userSchema = new Schema(
 
 userSchema.pre('save', function (next) {
   const user = this
-  if (!user.isModified('password')) return
+  if (user.isModified('password')) {
+    const salt = randomBytes(16).toString()
+    const hashedPassword = createHmac('sha256', salt)
+      .update(user.password)
+      .digest('hex')
 
-  const salt = randomBytes(16).toString()
-  const hashedPassword = createHmac('sha256', salt)
-    .update(user.password)
-    .digest('hex')
-
-  this.salt = salt
-  this.password = hashedPassword
-
+    this.salt = salt
+    this.password = hashedPassword
+  }
   next()
 })
 
