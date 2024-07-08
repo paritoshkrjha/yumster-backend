@@ -1,7 +1,18 @@
 import Post from '../models/post.js'
 
 async function handleCreatePost(req, res) {
-  const { title, description, ingredients, steps, duration, imageUrl, tags , author} = req.body
+  const {
+    title,
+    description,
+    ingredients,
+    steps,
+    duration,
+    imageUrl,
+    tags,
+    author,
+    mealType,
+    veg,
+  } = req.body
   try {
     const post = await Post.create({
       title,
@@ -11,7 +22,9 @@ async function handleCreatePost(req, res) {
       duration,
       imageUrl,
       tags,
-      author
+      author,
+      mealType,
+      veg,
     })
     return res.status(201).json({ status: 'success', post: post })
   } catch (error) {

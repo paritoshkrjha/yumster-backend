@@ -48,6 +48,10 @@ const postSchema = new Schema({
         enum: ['breakfast', 'lunch', 'dinner', 'snack'],
         required: true,
     },
+    veg: {
+        type: Boolean,
+        required: true,
+    },
     tags : [{
         type: String,
     }],
