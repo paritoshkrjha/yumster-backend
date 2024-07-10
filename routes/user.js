@@ -9,9 +9,7 @@ import authenticateToken from '../middleware/authentication.js'
 
 const router = Router()
 
-router.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+router.get('/', authenticateToken, handleGetUserData)
 
 router.post('/login', handleUserLogin)
 
@@ -19,6 +17,5 @@ router.get('/validate-token', handleUserTokenValidation)
 
 router.post('/signup', handleUserSignUp)
 
-router.get('/get-user', authenticateToken, handleGetUserData)
 
 export default router

@@ -82,7 +82,8 @@ userSchema.static(
       throw new Error('Password does not match')
 
     const token = generateUserToken(user)
-    return token
+    const { password: userPassword, salt: userSalt, ...userWithoutPassword } =  user._doc
+    return {token, user: userWithoutPassword}
   }
 )
 

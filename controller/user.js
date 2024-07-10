@@ -5,7 +5,8 @@ async function handleUserTokenValidation(req, res) {
   const token = req.headers.authorization.split(' ')[1]
   try {
     console.log(token)
-    const user = validateToken(token)
+    const payload = validateToken(token)
+    const user = await fetchUserData(payload._id)
     return res.status(200).json({ user: user })
   } catch (error) {
     return res.status(401).json({ message: error.message })
@@ -15,8 +16,11 @@ async function handleUserTokenValidation(req, res) {
 async function handleUserLogin(req, res) {
   const { email, password } = req.body
   try {
-    const token = await User.matchUserPasswordandGenerateToken(email, password)
-    return res.status(200).json({ status: 'success', token: token })
+    const { token, user } = await User.matchUserPasswordandGenerateToken(
+      email,
+      password
+    )
+    return res.status(200).json({ status: 'success', token: token, user: user })
   } catch (error) {
     return res.status(401).json({ status: 'error', message: error.message })
   }
@@ -51,25 +55,46 @@ async function handleUserSignUp(req, res) {
 
     //creating jwt token for the user
     const token = generateUserToken(newUser)
+    const { password, salt, ...newUserObjWithoutPassword } = newUser._doc
 
     return res.status(201).json({
       status: 'success',
       message: 'User created successfully',
       token: token,
+      user: newUserObjWithoutPassword,
     })
   } catch (error) {
     return res.status(500).json({ status: 'error', message: error.message })
   }
 }
 
-async function handleGetUserData(req, res) {
-  const userId = req.body.userId
+async function fetchUserData(userId) {
   try {
-    const user = await User.findById(userId)
+    const user = await User.findById(userId).select('-password -salt')
+    if (!user) return null
+    return user
+  } catch (error) {
+    return null
+  }
+}
+
+async function handleGetUserData(req, res) {
+  const userId = req.user._id
+  try {
+    const user = await fetchUserData(userId)
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: 'error', message: 'User not found' })
     return res.status(200).json({ status: 'success', user: user })
   } catch (error) {
     return res.status(500).json({ status: 'error', message: error.message })
   }
 }
 
-export { handleUserLogin, handleUserSignUp, handleUserTokenValidation,handleGetUserData }
+export {
+  handleUserLogin,
+  handleUserSignUp,
+  handleUserTokenValidation,
+  handleGetUserData,
+}
