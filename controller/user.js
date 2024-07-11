@@ -52,16 +52,18 @@ async function handleUserSignUp(req, res) {
       password,
       preferences,
     })
-
     //creating jwt token for the user
     const token = generateUserToken(newUser)
-    const { password, salt, ...newUserObjWithoutPassword } = newUser._doc
+
+    let newUserObj = newUser.toObject()
+    delete newUserObj.password
+    delete newUserObj.salt
 
     return res.status(201).json({
       status: 'success',
       message: 'User created successfully',
       token: token,
-      user: newUserObjWithoutPassword,
+      user: newUserObj,
     })
   } catch (error) {
     return res.status(500).json({ status: 'error', message: error.message })
