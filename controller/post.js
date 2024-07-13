@@ -35,9 +35,9 @@ async function handleCreatePost(req, res) {
 
 async function handleLikePost(req, res) {
   const { id } = req.params
-  const { userId } = req.body
+  const userId = req.user._id
   try {
-    const post = await Post.findById(id)
+    const post = await Post.findById(id).populate('author', 'username')
     if (!post) {
       return res
         .status(404)
@@ -59,9 +59,9 @@ async function handleLikePost(req, res) {
 
 async function handleStarPost(req, res) {
   const { id } = req.params
-  const { userId } = req.body
+  const userId = req.user._id
   try {
-    const user = await User.findById(userId)
+    const user = await User.findById(userId).select('-password -salt')
     if (!user) {
       return res
         .status(404)
@@ -92,4 +92,22 @@ async function handleGetPosts(req, res) {
   }
 }
 
-export { handleCreatePost, handleLikePost, handleStarPost, handleGetPosts }
+async function handleViewPost(req, res) {
+  const { id } = req.params
+  try {
+    const post = await Post.findById(id).populate('author', 'username')
+    post.views += 1
+    await post.save()
+    return res.status(200).json({ status: 'success', post: post })
+  } catch (error) {
+    return res.status(400).json({ status: 'error', message: error.message })
+  }
+}
+
+export {
+  handleCreatePost,
+  handleLikePost,
+  handleStarPost,
+  handleGetPosts,
+  handleViewPost,
+}
