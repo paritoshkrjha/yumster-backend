@@ -85,7 +85,6 @@ async function handleStarPost(req, res) {
 async function handleGetPosts(req, res) {
   try {
     const posts = await Post.find().populate('author', 'username')
-    console.log(posts)
     return res.status(200).json({ status: 'success', posts: posts })
   } catch (error) {
     return res.status(400).json({ status: 'error', message: error.message })
@@ -104,10 +103,30 @@ async function handleViewPost(req, res) {
   }
 }
 
+async function handleGetStarredPosts(req, res) {
+  const userId = req.user._id
+  try {
+    const user = await User.findById(userId).populate({
+      path: 'starredPosts',
+      populate: {
+        path: 'author',
+        select: 'username',
+      },
+    })
+    const starredPosts = user.starredPosts
+    return res
+      .status(200)
+      .json({ status: 'success', starredPosts: starredPosts })
+  } catch (error) {
+    return res.status(400).json({ status: 'error', message: error.message })
+  }
+}
+
 export {
   handleCreatePost,
   handleLikePost,
   handleStarPost,
   handleGetPosts,
   handleViewPost,
+  handleGetStarredPosts,
 }
